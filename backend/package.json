@@ -12,10 +12,13 @@
   "license": "ISC",
   "type": "module",
   "dependencies": {
+    "@langchain/community": "^1.1.28",
+    "@langchain/ollama": "^1.2.7",
     "bcrypt": "^6.0.0",
-    "dotenv": "^17.4.2",
+    "dotenv": "^16.6.1",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
+    "langchain": "^1.4.0",
     "mongoose": "^9.6.1"
   },
   "devDependencies": {

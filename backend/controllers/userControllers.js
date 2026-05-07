@@ -58,3 +58,19 @@ export const logoutUser = async (req, res) => {
 
   res.json({ message: "Logged out successfully" });
 };
+
+
+export const getUserProjects = async (req, res) => {
+  const userId = req.payload.userId;
+
+  try {
+    console.log("Fetching projects for user:", userId);
+    const user = await User.findById(userId).populate("projects");
+    if (!user) return res.status(404).json({ message: "User not found" });
+    res.json({ 
+      userId: user._id,
+      projects: user.projects });
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user projects" });
+  }
+};
