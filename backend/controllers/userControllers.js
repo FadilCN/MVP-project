@@ -24,8 +24,8 @@ export const createUser = async (req, res) => {
 };
 
 
-
 export const loginUser = async (req, res) => {
+  const userId = req.userId; 
   const { email, password } = req.body;
 
   // Find user by email
@@ -39,8 +39,11 @@ export const loginUser = async (req, res) => {
   // Generate JWT
   const token = jwt.sign({ userId: user._id }, JWTkey, { expiresIn: '1h' });
 
-  res.json({ token });
-  
+  return res.status(200).json({ 
+    message: "Login successful", 
+    userId: user._id,
+    token: token
+  });
 };
 
 // logout

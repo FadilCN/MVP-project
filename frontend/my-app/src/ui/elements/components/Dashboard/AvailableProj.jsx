@@ -1,29 +1,63 @@
 import { SiPython, SiJavascript } from "react-icons/si";
 import { TbWorldWww } from "react-icons/tb";
+import { useState, useEffect } from "react";
+import CreateProject from "./CreateProject";
+import Cookies from "js-cookie";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
+const getProjects = async () => {
+  try {
+    const token = Cookies.get("token");
+
+    const res = await axios.get(
+      "http://localhost:3000/users/projects",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return res.data;
+  } catch (err) {
+    console.error(err);
+    return { projects: [] };
+  }
+};
+
 
 
 function AvailableProj() {
-  const data = {
-    userId: "69fb2f139d4c42368a74c7d9",
-    projects: [
-      { _id: "69fb2f5c9d4c42368a74c7da", userId: "69fb2f139d4c42368a74c7d9", name: "Neural Task Manager",      type: "js", __v: 0, id: "69fb2f5c9d4c42368a74c7da" },
-      { _id: "70ac3g6d0e5f53479b85d8eb", userId: "69fb2f139d4c42368a74c7d9", name: "NexusFlow Engine",         type: "python", __v: 0, id: "70ac3g6d0e5f53479b85d8eb" },
-      { _id: "81bd4h7e1f6g64580c96e9fc", userId: "69fb2f139d4c42368a74c7d9", name: "Async Socket Handler",     type: "HTML", __v: 0, id: "81bd4h7e1f6g64580c96e9fc" },
-      { _id: "92ce5i8f2g7h75691d07f0gd", userId: "69fb2f139d4c42368a74c7d9", name: "Dynamic Auth Middleware",  type: "HTML", __v: 0, id: "92ce5i8f2g7h75691d07f0gd" },
-      { _id: "a3df6j9g3h8i86702e18g1he", userId: "69fb2f139d4c42368a74c7d9", name: "Pixel Canvas Renderer",   type: "js", __v: 0, id: "a3df6j9g3h8i86702e18g1he" },
-    ],
-  };
 
-  const projectDetails = data.projects.map((project) => ({
-    name: project.name,
-    type: project.type,
-  }));
+  const [projects, setProjects] = useState({ projects: [] });
+  const [popup, setPopup] = useState(false);
+  const [type, setType] = useState(null);
+
+  useEffect(() => {
+    const load = async () => {
+      const data = await getProjects();
+      setProjects(data);
+    };
+
+    load();
+  }, []);
+
+  const data = projects;
+
+const projectDetails = data.projects.map((project) => ({
+  id: project._id,
+  name: project.name,
+  type: project.type,
+}));
 
   const cards = [
-    { id: "python",     icon: <SiPython />, label: "Python",   iconColor: "text-blue-400",  desc: "ML, scripting, automation", accent: "text-blue-400",   border: "hover:border-blue-500/40"   },
-    { id: "web",        icon: <TbWorldWww />, label: "Web",     iconColor: "text-cyan-400",    desc: "HTML, CSS, full-stack",     accent: "text-cyan-400",   border: "hover:border-cyan-500/40"   },
-    { id: "javascript", icon: <SiJavascript />, label: "JavaScript",iconColor: "text-yellow-400", desc: "Node, React, TypeScript",   accent: "text-yellow-400", border: "hover:border-yellow-500/40" },
+    { id: "python",     icon: <SiPython />, label: "Python",   iconColor: "text-blue-400",  desc: "ML, scripting, automation", accent: "text-blue-400",   border: "hover:border-blue-500/40", type:"python" },
+    { id: "web",        icon: <TbWorldWww />, label: "Web",     iconColor: "text-cyan-400",    desc: "HTML, CSS, full-stack",     accent: "text-cyan-400",   border: "hover:border-cyan-500/40" ,type:"HTML"  },
+    { id: "javascript", icon: <SiJavascript />, label: "JavaScript",iconColor: "text-yellow-400", desc: "Node, React, TypeScript",   accent: "text-yellow-400", border: "hover:border-yellow-500/40", type:"js" },
   ];
+
+  const navigate = useNavigate();
+
 
   return (
     <div className="pl-5 w-screen pt-5 bg-zinc-950 grid grid-cols-[1fr_2fr] gap-4">
@@ -33,10 +67,14 @@ function AvailableProj() {
           Get started with new Projects
         </span>
         <div className="grid grid-rows-3 gap-3">
-          {cards.map(({ id, icon, label, desc, accent, border, iconColor }) => (
+          {cards.map(({ id, icon, label, desc, accent, border, iconColor,type }) => (
             <button
               key={id}
               className={`flex flex-row items-center gap-3.5 px-4 py-3.5 rounded-xl bg-zinc-900 border border-zinc-800 ${border} text-left cursor-pointer transition-all hover:-translate-y-0.5 group`}
+              onClick={() => {
+                setPopup(true);
+                setType(type);
+              }} 
             >
               <div className={`p-2 rounded-lg bg-zinc-800 w-fit text-xl flex-shrink-0 ${iconColor}`}>
                 {icon}
@@ -54,9 +92,9 @@ function AvailableProj() {
       </div>
 
       {/* Right / Recent Projects */}
-      <div className="flex flex-col gap-3 pr-5 pb-5">
+      <div className="flex flex-col gap-3 pr-5 pb-5 ">
         <span className="font-semibold text-slate-300">Recent Projects</span>
-        <div className="flex flex-col gap-0.5">
+        <div className="flex flex-col gap-0.5 overflow-y-auto min-h-0 flex-1">
           {projectDetails.map((project, i) => {
             const dotColor = {
               python: "bg-blue-400",
@@ -71,10 +109,20 @@ function AvailableProj() {
             }[project.type] ?? project.type;
 
             return (
+                  
               <div
                 key={i}
                 className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg border border-transparent hover:bg-zinc-900 hover:border-zinc-800 cursor-pointer transition-all group"
+                onClick={() => {
+                  localStorage.setItem("projectId", project.id);
+                  localStorage.setItem("projectName", project.name)
+                  navigate("/editor");
+                  
+                  console.log(localStorage.getItem("projectId"))
+                }}
+                
               >
+
                 <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${dotColor}`} />
                 <span className="text-[12.5px] font-medium text-zinc-400 group-hover:text-slate-200 flex-1 truncate transition-colors">
                   {project.name}
@@ -87,6 +135,8 @@ function AvailableProj() {
           })}
         </div>
       </div>
+         {popup && <CreateProject setPopup={setPopup} type={type} />}
+    
     </div>
   );
 }

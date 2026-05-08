@@ -1,11 +1,39 @@
 import { useState } from "react";
 import Editor from "@monaco-editor/react";
 import { FaRegFileCode } from "react-icons/fa6";
+import Cookies from "js-cookie";
+import axios from "axios";
 
 function CodeViewer(props) {
-  const [code, setCode] = useState("// write your code here");
+
+  const [code, setCode] = useState("// write your code here"); 
+  const fileId = localStorage.getItem("fileId");
+  console.log(fileId);
+  
+    const handleSave = async (Id) => {
+      
+    try {
+      const token = Cookies.get("token");
+      await axios.put(
+        `http://localhost:3000/files/${Id}`,
+        {
+          content: code,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+
+
 
   const handleEditorDidMount = (editor, monaco) => {
+
+    
     monaco.editor.defineTheme("myCustomTheme", {
       base: "vs-dark",
       inherit: true,
@@ -34,7 +62,17 @@ function CodeViewer(props) {
           value={props.content}
           onChange={(value) => setCode(value || "")}
           onMount={handleEditorDidMount}
+
+          
         />
+         <button className="h-5 w-25 mb-15, flex items-center justify-center bg-slate-600 text-white rounded-sm hover:bg-slate-500 transition"
+    onClick={() => {
+                handleSave(fileId);
+              }} 
+    >
+  <span className=" text-[12px]  ">Save File</span>
+</button>
+        
       </div>
     </div>
   );
