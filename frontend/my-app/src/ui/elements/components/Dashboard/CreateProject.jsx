@@ -15,6 +15,8 @@ const navigate = useNavigate();
     const token = Cookies.get("token");
     const userId = Cookies.get("userId");
 
+    
+
     const res = await axios.post(
       "http://localhost:3000/projects/create",
       {
@@ -28,14 +30,25 @@ const navigate = useNavigate();
         },
       }
     );
-    
+
     localStorage.setItem("projectId", res.data._id);
     localStorage.setItem("projectName", res.data.name);
 
-    
+    const res2 = await axios.post(
+      "http://localhost:3000/chats/create",
+      {
+        projectId: localStorage.getItem("projectId"),
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
 
     navigate("/editor");
-    return res.data;
+    return res2.data;
   } catch (err) {
     console.error(err);
     return { projects: [] };

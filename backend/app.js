@@ -3,6 +3,8 @@ import cors from "cors"; // Move import here
 import userRoutes from "./routes/userRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import fileRoutes from "./routes/fileRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
+import llmRoutes from "./routes/llmRoutes.js";
 
 const app = express();
 
@@ -20,5 +22,7 @@ app.use(express.json());
 app.use("/users", userRoutes);
 app.use("/projects", projectRoutes);
 app.use("/files", fileRoutes);
+app.use("/chats", chatRoutes);
+app.use("/llm", llmRoutes);
 
 export default app;

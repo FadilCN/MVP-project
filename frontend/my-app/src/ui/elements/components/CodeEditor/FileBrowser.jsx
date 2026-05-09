@@ -9,11 +9,18 @@ import { FiTrash2 } from "react-icons/fi";
 import CreateFile from './CreateFile';
 import Cookies from "js-cookie";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 
 function FileBrowser(props) {
 const [popup, setPopup] = useState(false);
 const fileId=props.fileId
+
+const navigate = useNavigate()
+const handleHome = () => {
+    navigate("/");
+
+}; // Set fileId to null to clear the file data
 
 const handleDelete = async (currentFileId) => {
   try {
@@ -52,7 +59,11 @@ const handleDelete = async (currentFileId) => {
 
     {/* Sidebar */}
     <div className="flex flex-col justify-end items-center gap-6 pb-6 bg-zinc-950 text-white">
-      <FaHome className="text-slate-500 text-xl cursor-pointer hover:text-white transition" />
+      <FaHome className="text-slate-500 text-xl cursor-pointer hover:text-white transition" 
+      onClick={() => {
+        handleHome();
+      }}
+      />
          <IoMdShare className="text-slate-500 text-xl cursor-pointer hover:text-white transition" />
          <FaInbox className="text-slate-500 text-xl cursor-pointer hover:text-white transition" />
             <FaTasks className="text-slate-500 text-xl cursor-pointer hover:text-white transition" />

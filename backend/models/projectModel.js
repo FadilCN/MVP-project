@@ -26,7 +26,7 @@ projectSchema.virtual("files", {
   foreignField: "projectId",
 });
 
-// 👇 include virtuals
+
 projectSchema.set("toJSON", { virtuals: true });
 projectSchema.set("toObject", { virtuals: true });
 export const Project = mongoose.model("Project", projectSchema)

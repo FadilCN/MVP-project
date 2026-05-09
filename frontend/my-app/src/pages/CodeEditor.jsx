@@ -6,11 +6,14 @@ import FileBrowser from "../ui/elements/components/CodeEditor/FileBrowser";
 import CodeViewer from "../ui/elements/components/CodeEditor/CodeViewer";
 import AIChat from "../ui/elements/components/CodeEditor/AiChat";
 
+
 function CodeEditor() {
   const [files, setFiles] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [topic, setTopic] = useState("");
+  const [code, setCode] = useState("");
 
+  console.log(code);
   
   const loadFiles = async () => {
     try {
@@ -72,9 +75,13 @@ function CodeEditor() {
       <CodeViewer
         fileName={fileName[selectedIndex]}        
         content={fileContent[selectedIndex]}
+        loadFiles={loadFiles}
+        setCode={setCode}
       />
 
-      <AIChat />
+      <AIChat
+        code = {code}
+      />
     </div>
   );
 }

@@ -6,7 +6,7 @@ import axios from "axios";
 
 function CodeViewer(props) {
 
-  const [code, setCode] = useState("// write your code here"); 
+  const [code, setCode] = useState(""); 
   const fileId = localStorage.getItem("fileId");
   console.log(fileId);
   
@@ -23,6 +23,9 @@ function CodeViewer(props) {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      props.loadFiles();
+      props.setCode(code);
+
     } catch (err) {
       console.error(err);
     }
