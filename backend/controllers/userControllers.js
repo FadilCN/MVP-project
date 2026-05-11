@@ -8,41 +8,40 @@ dotenv.config();
 
 const JWTkey = process.env.JWT_KEY;
 
-
 export const createUser = async (req, res) => {
-  const { email, password } = req.body; 
+  const { email, password } = req.body;
 
   const hashedpassword = await bcrypt.hash(password, 12);
 
   const user = await User.create({
-    email:  email,
-    password: hashedpassword
+    email: email,
+    password: hashedpassword,
   });
 
-  console.log("Sent to Database")
-  res.status(201).json({ message: 'User created successfully' });;
+  console.log("Sent to Database");
+  res.status(201).json({ message: "User created successfully" });
 };
 
-
 export const loginUser = async (req, res) => {
-  const userId = req.userId; 
+  const userId = req.userId;
   const { email, password } = req.body;
 
   // Find user by email
   const user = await User.findOne({ email });
-        if (!user) return res.status(404).json({message: 'User not found'});
-  
+  if (!user) return res.status(404).json({ message: "User not found" });
+
   // Compare password
   const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) return res.status(401).json({message: 'Invalid password'});
+  if (!isPasswordValid)
+    return res.status(401).json({ message: "Invalid password" });
 
   // Generate JWT
-  const token = jwt.sign({ userId: user._id }, JWTkey, { expiresIn: '1h' });
+  const token = jwt.sign({ userId: user._id }, JWTkey, { expiresIn: "1h" });
 
-  return res.status(200).json({ 
-    message: "Login successful", 
+  return res.status(200).json({
+    message: "Login successful",
     userId: user._id,
-    token: token
+    token: token,
   });
 };
 
@@ -55,13 +54,12 @@ export const logoutUser = async (req, res) => {
   }
 
   // Save token to blacklist (example: MongoDB collection)
-  await BlacklistedToken.create({ 
-    token: token
-   });
+  await BlacklistedToken.create({
+    token: token,
+  });
 
   res.json({ message: "Logged out successfully" });
 };
-
 
 export const getUserProjects = async (req, res) => {
   const userId = req.payload.userId;
@@ -70,9 +68,10 @@ export const getUserProjects = async (req, res) => {
     console.log("Fetching projects for user:", userId);
     const user = await User.findById(userId).populate("projects");
     if (!user) return res.status(404).json({ message: "User not found" });
-    res.json({ 
+    res.json({
       userId: user._id,
-      projects: user.projects });
+      projects: user.projects,
+    });
   } catch (error) {
     res.status(500).json({ message: "Error fetching user projects" });
   }

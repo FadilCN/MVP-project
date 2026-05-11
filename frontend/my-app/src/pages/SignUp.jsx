@@ -28,7 +28,7 @@ function SignUp() {
 
     setLoading(true);
     try {
-      await axios.post("http://localhost:3000/users/signup",{
+      await axios.post("http://localhost:3000/users/signup", {
         email: formData.email,
         password: formData.password,
       });
@@ -47,12 +47,12 @@ function SignUp() {
       <TopBar />
       <div className="flex items-center justify-center min-h-screen bg-zinc-900">
         <div className="bg-zinc-950 rounded-2xl p-8 w-full max-w-sm">
-
-          <h1 className="text-lg font-semibold text-slate-200 mb-1">Create account</h1>
+          <h1 className="text-lg font-semibold text-slate-200 mb-1">
+            Create account
+          </h1>
           <p className="text-sm text-zinc-500 mb-6">Get started for free</p>
 
           <div className="flex flex-col gap-4">
-
             <div className="flex-1">
               <label className="text-xs text-zinc-500 block mb-1">Name</label>
               <input
@@ -78,7 +78,9 @@ function SignUp() {
             </div>
 
             <div>
-              <label className="text-xs text-zinc-500 block mb-1">Password</label>
+              <label className="text-xs text-zinc-500 block mb-1">
+                Password
+              </label>
               <input
                 type="password"
                 name="password"
@@ -90,7 +92,9 @@ function SignUp() {
             </div>
 
             <div>
-              <label className="text-xs text-zinc-500 block mb-1">Confirm password</label>
+              <label className="text-xs text-zinc-500 block mb-1">
+                Confirm password
+              </label>
               <input
                 type="password"
                 name="confirmPassword"
@@ -102,9 +106,7 @@ function SignUp() {
             </div>
           </div>
 
-          {error && (
-            <p className="text-xs text-red-400 mt-3">{error}</p>
-          )}
+          {error && <p className="text-xs text-red-400 mt-3">{error}</p>}
 
           <button
             onClick={handleSubmit}
@@ -116,9 +118,13 @@ function SignUp() {
 
           <p className="text-xs text-center text-zinc-500 mt-4">
             Already have an account?{" "}
-            <a href="#" className="text-zinc-300 font-medium hover:text-white transition-colors">Sign in</a>
+            <a
+              href="#"
+              className="text-zinc-300 font-medium hover:text-white transition-colors"
+            >
+              Sign in
+            </a>
           </p>
-
         </div>
       </div>
     </div>

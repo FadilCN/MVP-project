@@ -1,6 +1,6 @@
-import TopBar from "../ui/elements/components/Dashboard/TopBar"
-import Welcome from "../ui/elements/components/Dashboard/welcome"
-import AvailableProj from "../ui/elements/components/Dashboard/AvailableProj"
+import TopBar from "../ui/elements/components/Dashboard/TopBar";
+import Welcome from "../ui/elements/components/Dashboard/welcome";
+import AvailableProj from "../ui/elements/components/Dashboard/AvailableProj";
 
 function DashBoard() {
   return (
@@ -9,7 +9,7 @@ function DashBoard() {
       <Welcome />
       <AvailableProj />
     </div>
-  )
+  );
 }
 
-export default DashBoard
+export default DashBoard;

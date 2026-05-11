@@ -11,5 +11,3 @@ router.put("/:id", verifyToken, projectControllers.updateProject);
 router.delete("/:id", verifyToken, projectControllers.deleteProject);
 
 export default router;
-
-

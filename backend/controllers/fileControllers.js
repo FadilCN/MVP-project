@@ -7,12 +7,12 @@ export const createFile = async (req, res) => {
     projectId,
     fileName,
     content,
-    path
+    path,
   });
 
   res.json(file);
 };
-    
+
 // get all files of a project
 export const getFilesByProject = async (req, res) => {
   const { projectId } = req.params;
@@ -41,7 +41,7 @@ export const updateFile = async (req, res) => {
   const file = await File.findByIdAndUpdate(
     id,
     { fileName, content, path },
-    { new: true }
+    { new: true },
   );
 
   if (!file) {

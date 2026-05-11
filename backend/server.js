@@ -6,12 +6,9 @@ dotenv.config();
 
 import { connectDatabase } from "./database/connection.js";
 
-
-
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
-
 
 const startServer = async () => {
   try {

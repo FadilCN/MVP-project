@@ -1,18 +1,16 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const chatSchema = new mongoose.Schema({
+  projectId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Project",
+    required: true,
+  },
 
-    projectId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Project',
-        required: true
-    },
+  history: {
+    type: [String],
+    default: [],
+  },
+});
 
-    history: {
-        type: [String],
-        default: []
-    },
-
-})
-
-export const Chat = mongoose.model("Chat", chatSchema)
+export const Chat = mongoose.model("Chat", chatSchema);

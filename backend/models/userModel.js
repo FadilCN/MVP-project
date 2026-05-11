@@ -1,18 +1,17 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-    email: {
+  email: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
   },
 
   password: {
     type: String,
-    required: true
+    required: true,
   },
-  
-})
+});
 
 userSchema.virtual("projects", {
   ref: "Project",
@@ -23,6 +22,4 @@ userSchema.virtual("projects", {
 userSchema.set("toJSON", { virtuals: true });
 userSchema.set("toObject", { virtuals: true });
 
-
-export const User = mongoose.model("User", userSchema)
-
+export const User = mongoose.model("User", userSchema);

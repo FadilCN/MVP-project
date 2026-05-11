@@ -6,5 +6,4 @@ const router = express.Router();
 
 router.post("/response", verifyToken, llmControllers.getResponse);
 
-
 export default router;

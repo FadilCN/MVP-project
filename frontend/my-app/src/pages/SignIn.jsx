@@ -12,15 +12,15 @@ function SignIn() {
     setFormData({ ...formData, [e.target.type]: e.target.value });
   };
 
-    const navigate = useNavigate()
+  const navigate = useNavigate();
 
- const handleSubmit = async () => {
-  setLoading(true);
+  const handleSubmit = async () => {
+    setLoading(true);
 
-   try {
+    try {
       const res = await axios.post(
         "http://localhost:3000/users/login",
-        formData
+        formData,
       );
 
       // save token in cookie
@@ -34,7 +34,7 @@ function SignIn() {
         sameSite: "strict",
       });
 
-      console.log(res.data.token );
+      console.log(res.data.token);
       console.log("Token saved cookies");
       console.log(Cookies.get("token"));
       navigate("/");
@@ -43,7 +43,7 @@ function SignIn() {
     } finally {
       setLoading(false);
     }
-};
+  };
 
   return (
     <div className="grid grid-rows-[auto_1fr] h-screen w-screen overflow-hidden">
@@ -64,7 +64,9 @@ function SignIn() {
               />
             </div>
             <div>
-              <label className="text-xs text-zinc-500 block mb-1">Password</label>
+              <label className="text-xs text-zinc-500 block mb-1">
+                Password
+              </label>
               <input
                 type="password"
                 onChange={handleChange}
@@ -74,7 +76,7 @@ function SignIn() {
             </div>
           </div>
 
-          <button 
+          <button
             onClick={handleSubmit}
             disabled={loading}
             className="w-full mt-5 bg-zinc-700 text-slate-200 font-medium text-sm rounded-lg py-2.5 hover:bg-zinc-600 disabled:opacity-50"
@@ -84,7 +86,9 @@ function SignIn() {
 
           <p className="text-xs text-center text-zinc-500 mt-4">
             Don't have an account?{" "}
-            <a href="#" className="text-zinc-300 font-medium hover:text-white">Sign up</a>
+            <a href="#" className="text-zinc-300 font-medium hover:text-white">
+              Sign up
+            </a>
           </p>
         </div>
       </div>

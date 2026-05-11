@@ -7,7 +7,7 @@ export const createProject = async (req, res) => {
   const project = await Project.create({
     userId,
     name,
-    type
+    type,
   });
 
   res.json(project);
@@ -41,7 +41,7 @@ export const updateProject = async (req, res) => {
   const project = await Project.findOneAndUpdate(
     { _id: id, userId },
     { name, type },
-    { new: true }
+    { new: true },
   );
 
   if (!project) {
@@ -50,7 +50,6 @@ export const updateProject = async (req, res) => {
 
   res.json(project);
 };
-
 
 export const deleteProject = async (req, res) => {
   const userId = req.payload.userId;

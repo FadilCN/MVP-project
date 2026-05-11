@@ -3,7 +3,11 @@ import axios from "axios";
 import { StateGraph, END } from "@langchain/langgraph";
 
 async function ask(prompt, res) {
-  const stream = await ollama.generate({ model: "gemma2:2b", prompt, stream: true });
+  const stream = await ollama.generate({
+    model: "gemma2:2b",
+    prompt,
+    stream: true,
+  });
   let full = "";
   for await (const chunk of stream) {
     full += chunk.response;
@@ -16,28 +20,38 @@ const sink = { write: () => {} };
 
 async function comparer(state) {
   state.res.write("\n[analyzing content...]\n");
-  const answer = await ask(`Is this code? If yes, does it need optimization or bug fixing?
+  const answer = await ask(
+    `Is this code? If yes, does it need optimization or bug fixing?
 Reply exactly:
 IS_CODE: yes/no
 NEEDS: optimize/fix/both/none
 
 Content:
-${state.content}`, sink);
+${state.content}`,
+    sink,
+  );
 
   const isCode = /IS_CODE:\s*yes/i.test(answer);
-  const needs = (answer.match(/NEEDS:\s*(\w+)/i) || [])[1]?.toLowerCase() || "none";
+  const needs =
+    (answer.match(/NEEDS:\s*(\w+)/i) || [])[1]?.toLowerCase() || "none";
   return { ...state, isCode, needs };
 }
 
 async function optimizer(state) {
   state.res.write("\n[optimizing code...]\n");
-  const result = await ask(`Optimize this code. Return only the improved code.\n\n${state.content}`, sink);
+  const result = await ask(
+    `Optimize this code. Return only the improved code.\n\n${state.content}`,
+    sink,
+  );
   return { ...state, newContent: result };
 }
 
 async function fixer(state) {
   state.res.write("\n[fixing bugs...]\n");
-  const result = await ask(`Fix all bugs in this code. Return only the fixed code.\n\n${state.content}`, sink);
+  const result = await ask(
+    `Fix all bugs in this code. Return only the fixed code.\n\n${state.content}`,
+    sink,
+  );
   return { ...state, newContent: result };
 }
 
@@ -47,7 +61,7 @@ async function sender(state) {
   await axios.put(
     `http://localhost:3000/files/${state.fileId}`,
     { content: cleaned },
-    { headers: { Authorization: `Bearer ${state.token}` } }
+    { headers: { Authorization: `Bearer ${state.token}` } },
   );
   state.res.write("\n[file saved]\n");
   return state;
@@ -55,13 +69,16 @@ async function sender(state) {
 
 async function codeComparer(state) {
   state.res.write("\n[comparing changes...]\n");
-  const result = await ask(`What changed between these two? Keep it under 20 words.
+  const result = await ask(
+    `What changed between these two? Keep it under 20 words.
 
 ORIGINAL:
 ${state.content}
 
 UPDATED:
-${state.newContent}`, state.res);
+${state.newContent}`,
+    state.res,
+  );
   return { ...state, response: result };
 }
 

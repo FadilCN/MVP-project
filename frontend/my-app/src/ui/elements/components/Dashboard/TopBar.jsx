@@ -10,14 +10,14 @@ function TopBar() {
     try {
       const token = Cookies.get("token");
       await axios.post(
-      "http://localhost:3000/users/logout",
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+        "http://localhost:3000/users/logout",
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         },
-      }
-    );
+      );
       navigate("/signin");
     } catch (err) {
       console.error("Logout failed:", err);

@@ -127,9 +127,7 @@ function summarize(state) {
 // ─── Routing ─────────────────────────────────────────────────────
 
 function hasNextFile(state) {
-  return FILE_STORE[state.currentFileId]?.next
-    ? "loadNextFile"
-    : "summarize";
+  return FILE_STORE[state.currentFileId]?.next ? "loadNextFile" : "summarize";
 }
 
 // ─── Graph ───────────────────────────────────────────────────────

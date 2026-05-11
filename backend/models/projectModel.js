@@ -1,24 +1,22 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const projectSchema = new mongoose.Schema({
-
-    userId: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
-    },
+    ref: "User",
+    required: true,
+  },
 
-    name: {
-        type: String,
-        required: true
-    },
+  name: {
+    type: String,
+    required: true,
+  },
 
-    type: {
-        type: String,       
-        required: true
-    },
-
-})
+  type: {
+    type: String,
+    required: true,
+  },
+});
 
 projectSchema.virtual("files", {
   ref: "File",
@@ -26,7 +24,6 @@ projectSchema.virtual("files", {
   foreignField: "projectId",
 });
 
-
 projectSchema.set("toJSON", { virtuals: true });
 projectSchema.set("toObject", { virtuals: true });
-export const Project = mongoose.model("Project", projectSchema)
+export const Project = mongoose.model("Project", projectSchema);

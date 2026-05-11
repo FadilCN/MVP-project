@@ -15,7 +15,7 @@ async function processFiles(state) {
 
   for (const file of state.files) {
     console.log(`Analyzing: ${file.fileName}...`);
-    
+
     const response = await llm.invoke([
       { role: "system", content: "Review this code and provide feedback." },
       { role: "user", content: `Code:\n${file.content}` },
@@ -23,7 +23,7 @@ async function processFiles(state) {
 
     responses.push({
       file: file.fileName,
-      rawFeedback: response.content
+      rawFeedback: response.content,
     });
   }
 
@@ -42,7 +42,7 @@ const app = workflow.compile();
  */
 export async function runCodeReview(jsonData) {
   const result = await app.invoke({ files: jsonData });
-  
+
   // Returns the array of results containing file names and raw LLM text
   return result.results;
 }

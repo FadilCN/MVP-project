@@ -6,7 +6,6 @@ import FileBrowser from "../ui/elements/components/CodeEditor/FileBrowser";
 import CodeViewer from "../ui/elements/components/CodeEditor/CodeViewer";
 import AIChat from "../ui/elements/components/CodeEditor/AiChat";
 
-
 function CodeEditor() {
   const [files, setFiles] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -14,7 +13,7 @@ function CodeEditor() {
   const [code, setCode] = useState("");
 
   console.log(code);
-  
+
   const loadFiles = async () => {
     try {
       const projectId = localStorage.getItem("projectId");
@@ -28,7 +27,7 @@ function CodeEditor() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       const data = res.data;
@@ -44,17 +43,14 @@ function CodeEditor() {
     }
   };
 
-  
   useEffect(() => {
     loadFiles();
   }, []);
 
-  
   const fileName = files.map((file) => file.fileName);
   const fileContent = files.map((file) => file.content);
   const fileId = files.map((file) => file._id);
 
-  
   localStorage.setItem("fileId", fileId[selectedIndex]);
   console.log(fileId);
 
@@ -73,16 +69,13 @@ function CodeEditor() {
       />
 
       <CodeViewer
-        fileName={fileName[selectedIndex]}        
+        fileName={fileName[selectedIndex]}
         content={fileContent[selectedIndex]}
         loadFiles={loadFiles}
         setCode={setCode}
       />
 
-      <AIChat
-        code = {code}
-        loadFiles={loadFiles}
-      />
+      <AIChat code={code} loadFiles={loadFiles} />
     </div>
   );
 }
