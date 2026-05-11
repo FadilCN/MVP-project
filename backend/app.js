@@ -5,6 +5,7 @@ import projectRoutes from "./routes/projectRoutes.js";
 import fileRoutes from "./routes/fileRoutes.js";
 import chatRoutes from "./routes/chatRoutes.js";
 import llmRoutes from "./routes/llmRoutes.js";
+import runRoutes from "./routes/runRoutes.js";
 
 const app = express();
 
@@ -26,5 +27,6 @@ app.use("/projects", projectRoutes);
 app.use("/files", fileRoutes);
 app.use("/chats", chatRoutes);
 app.use("/llm", llmRoutes);
+app.use("/code", runRoutes);
 
 export default app;

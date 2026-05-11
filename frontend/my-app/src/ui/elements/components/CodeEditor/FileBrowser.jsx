@@ -89,11 +89,16 @@ const handleDelete = async (currentFileId) => {
     className="rounded-sm px-2 py-1 text-xs text-slate-500 flex items-center gap-2 hover:bg-zinc-800 hover:text-slate-300 transition-all duration-200 cursor-pointer group"
     onClick={() => {
       
+      localStorage.setItem("fileName", props.fileName[index]);
       props.setSelectedIndex(index);
       props.setTopic(file);
       
     }}
+    
+
   >
+      <FaFile className="text-slate-500 text-[12px]" />
+      
     <span className="flex-1 truncate">{file.name ?? file}</span>
 
     

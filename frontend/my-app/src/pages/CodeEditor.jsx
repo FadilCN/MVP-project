@@ -53,6 +53,7 @@ function CodeEditor() {
 
   localStorage.setItem("fileId", fileId[selectedIndex]);
   console.log(fileId);
+  console.log("File from code editor",files)
 
   const projectName = localStorage.getItem("projectName");
 
@@ -73,6 +74,7 @@ function CodeEditor() {
         content={fileContent[selectedIndex]}
         loadFiles={loadFiles}
         setCode={setCode}
+        files={files}
       />
 
       <AIChat code={code} loadFiles={loadFiles} />
