@@ -3,7 +3,8 @@ import { IoSend } from "react-icons/io5";
 import axios from "axios";
 import Cookies from "js-cookie";
 
-function AIChat({ code }) {
+
+function AIChat({ code, loadFiles }) {
   const [value, setValue] = useState("");
   const [files, setFiles] = useState([]);
   const [chatHistory, setChatHistory] = useState([]);
@@ -58,13 +59,18 @@ function AIChat({ code }) {
     }
   };
 
-  const sendllm = async (message) => {
+  const sendllm = async (fileId,message) => {
     try {
       const token = Cookies.get("token");
+      console.log("frontend token: ", token);
+    
 
       const res = await axios.post(
         `http://localhost:3000/llm/response`,
-        { message },
+        { message
+         ,fileId
+         ,token
+         },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -88,13 +94,19 @@ function AIChat({ code }) {
 
       console.log("codeee:", safeCode);
 
-      const response = await sendllm(userMessage + safeCode);
+      const fileId=localStorage.getItem("fileId")
+
+      const response = await sendllm(fileId ,userMessage + safeCode);
 
       console.log("AI Response:", response);
+
 
       if (response?.content) {
         await sendChat("AI: ", response.content);
       }
+
+      loadFiles();
+
     } catch (err) {
       console.error(err);
     } finally {

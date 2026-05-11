@@ -16,6 +16,7 @@ function FileBrowser(props) {
 const [popup, setPopup] = useState(false);
 const fileId=props.fileId
 
+
 const navigate = useNavigate()
 const handleHome = () => {
     navigate("/");
@@ -87,6 +88,7 @@ const handleDelete = async (currentFileId) => {
     key={index}
     className="rounded-sm px-2 py-1 text-xs text-slate-500 flex items-center gap-2 hover:bg-zinc-800 hover:text-slate-300 transition-all duration-200 cursor-pointer group"
     onClick={() => {
+      
       props.setSelectedIndex(index);
       props.setTopic(file);
       

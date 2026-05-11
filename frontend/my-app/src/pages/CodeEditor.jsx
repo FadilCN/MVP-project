@@ -81,6 +81,7 @@ function CodeEditor() {
 
       <AIChat
         code = {code}
+        loadFiles={loadFiles}
       />
     </div>
   );

@@ -2,6 +2,8 @@ import  response  from "../agent/llm.js";
 
 export const getResponse = async (req, res) => {
     const message = req.body.message;
-    const result = await response(message);
+    const fileId = req.body.fileId;
+    const token = req.body.token;
+    const result = await response(fileId,message,token);
     res.status(200).json(result);
 };
