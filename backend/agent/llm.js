@@ -2,90 +2,74 @@ import ollama from "ollama";
 import axios from "axios";
 import { StateGraph, END } from "@langchain/langgraph";
 
-async function ask(prompt) {
-  const res = await ollama.generate({ model: "gemma2:2b", prompt });
-  return res.response.trim();
+async function ask(prompt, res) {
+  const stream = await ollama.generate({ model: "gemma2:2b", prompt, stream: true });
+  let full = "";
+  for await (const chunk of stream) {
+    full += chunk.response;
+    res.write(chunk.response);
+  }
+  return full.trim();
 }
 
-// ── Nodes ────────────────────────────────────────────────────────────────────
+const sink = { write: () => {} };
 
 async function comparer(state) {
-  console.log("[agent] comparer");
-  const answer = await ask(
-    `Look at this content. Is it code? If yes, does it need optimization or bug fixing?
-Reply in this exact format:
+  state.res.write("\n[analyzing content...]\n");
+  const answer = await ask(`Is this code? If yes, does it need optimization or bug fixing?
+Reply exactly:
 IS_CODE: yes/no
 NEEDS: optimize/fix/both/none
 
 Content:
-${state.content}`
-  );
+${state.content}`, sink);
 
   const isCode = /IS_CODE:\s*yes/i.test(answer);
   const needs = (answer.match(/NEEDS:\s*(\w+)/i) || [])[1]?.toLowerCase() || "none";
-
-  console.log(`[comparer] isCode=${isCode} needs=${needs}`);
   return { ...state, isCode, needs };
 }
 
 async function optimizer(state) {
-  console.log("[agent] optimizer");
-  const result = await ask(
-    `Optimize the code by making it efficent like loops etc. Return only the improved code.\n\n${state.content}`
-  );
+  state.res.write("\n[optimizing code...]\n");
+  const result = await ask(`Optimize this code. Return only the improved code.\n\n${state.content}`, sink);
   return { ...state, newContent: result };
 }
 
 async function fixer(state) {
-  console.log("[agent] fixer");
-  const result = await ask(
-    `Fix all bugs and errors in this code. Return only the fixed code.\n\n${state.content}`
-  );
+  state.res.write("\n[fixing bugs...]\n");
+  const result = await ask(`Fix all bugs in this code. Return only the fixed code.\n\n${state.content}`, sink);
   return { ...state, newContent: result };
 }
 
-function cleanCodeBlock(text) {
-    text = String(text);
-    text = text.slice(text.indexOf('\n') + 1);
-    return text.slice(0, text.lastIndexOf("```"));
-
-}
 async function sender(state) {
-  console.log("[agent] sender");
-  
-
-  const cleaned = cleanCodeBlock(state.newContent); 
-
+  state.res.write("\n[saving file...]\n");
+  const cleaned = state.newContent.replace(/```[\w]*\n?/g, "").trim();
   await axios.put(
     `http://localhost:3000/files/${state.fileId}`,
     { content: cleaned },
     { headers: { Authorization: `Bearer ${state.token}` } }
   );
-  console.log("[sender] file saved");
+  state.res.write("\n[file saved]\n");
   return state;
 }
 
 async function codeComparer(state) {
-  console.log("[agent] codeComparer");
-  const result = await ask(
-    `Compare the original and updated code. And say what is changed less than 20.
+  state.res.write("\n[comparing changes...]\n");
+  const result = await ask(`What changed between these two? Keep it under 20 words.
 
 ORIGINAL:
 ${state.content}
 
 UPDATED:
-${state.newContent}`
-  );
+${state.newContent}`, state.res);
   return { ...state, response: result };
 }
 
 async function general(state) {
-  console.log("[agent] general");
-  const result = await ask(state.content);
+  state.res.write("\n[thinking...]\n");
+  const result = await ask(state.content, sink);
   return { ...state, response: result };
 }
-
-// ── Graph ────────────────────────────────────────────────────────────────────
 
 const graph = new StateGraph({
   channels: {
@@ -96,6 +80,7 @@ const graph = new StateGraph({
     isCode: false,
     needs: "none",
     response: "",
+    res: null,
   },
 });
 
@@ -123,11 +108,9 @@ graph.addEdge("general", END);
 
 const app = graph.compile();
 
-// ── Export ───────────────────────────────────────────────────────────────────
-
-async function response(fileId, content, token) {
+async function response(fileId, content, token, res) {
   try {
-    const finalState = await app.invoke({
+    await app.invoke({
       fileId,
       token,
       content,
@@ -135,12 +118,13 @@ async function response(fileId, content, token) {
       isCode: false,
       needs: "none",
       response: "",
+      res,
     });
-
-    return { content: finalState.response };
   } catch (err) {
     console.error("[ERROR]", err);
-    return { error: err.message };
+    res.write("\n[something went wrong]\n");
+  } finally {
+    res.end();
   }
 }
 

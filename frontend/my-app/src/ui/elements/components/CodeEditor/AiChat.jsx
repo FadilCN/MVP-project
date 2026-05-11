@@ -59,27 +59,39 @@ function AIChat({ code, loadFiles }) {
     }
   };
 
-  const sendllm = async (fileId,message) => {
-    try {
-      const token = Cookies.get("token");
-      console.log("frontend token: ", token);
-    
+  const sendllm = async (fileId, message) => {
+    const token = Cookies.get("token");
+    console.log("frontend token: ", token);
 
-      const res = await axios.post(
-        `http://localhost:3000/llm/response`,
-        { message
-         ,fileId
-         ,token
-         },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+    const res = await fetch("http://localhost:3000/llm/response", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ message, fileId, token }),
+    });
 
-      return res.data;
-    } catch (err) {
-      console.error(err);
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let full = "";
+
+    setChatHistory((prev) => [...prev, "AI: "]);
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = decoder.decode(value);
+      full += chunk;
+
+      setChatHistory((prev) => {
+        const updated = [...prev];
+        updated[updated.length - 1] = "AI: " + full;
+        return updated;
+      });
     }
+
+    return full;
   };
 
   useEffect(() => {
@@ -94,15 +106,14 @@ function AIChat({ code, loadFiles }) {
 
       console.log("codeee:", safeCode);
 
-      const fileId=localStorage.getItem("fileId")
+      const fileId = localStorage.getItem("fileId");
 
-      const response = await sendllm(fileId ,userMessage + safeCode);
+      const content = await sendllm(fileId, userMessage + safeCode);
 
-      console.log("AI Response:", response);
+      console.log("AI Response:", content);
 
-
-      if (response?.content) {
-        await sendChat("AI: ", response.content);
+      if (content) {
+        await sendChat("AI: ", content);
       }
 
       loadFiles();
