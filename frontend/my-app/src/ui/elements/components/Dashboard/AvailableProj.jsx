@@ -49,7 +49,7 @@ function AvailableProj() {
   }, []);
 
   const handleDelete = async (e, projectId) => {
-    e.stopPropagation(); // prevent triggering the navigate onClick
+    e.stopPropagation();
     const success = await deleteProject(projectId);
     if (success) loadProjects();
   };
@@ -67,17 +67,18 @@ function AvailableProj() {
   ];
 
   return (
-    <div className="pl-5 w-screen pt-5 bg-zinc-950 grid grid-cols-[1fr_2fr] gap-4">
-      {/* Left / New Projects */}
-      <div className="flex flex-col gap-4 pr-2 pb-5">
+    // Changed grid to flex for better control over the "fill"
+    <div className="flex w-full h-full pl-5 pt-5 bg-zinc-950 gap-4 overflow-hidden">
+      {/* Left / New Projects - Using flex-3 to fill space */}
+      <div className="flex-[1.5] flex flex-col gap-4 pr-2 pb-5">
         <span className="font-semibold text-slate-300">
           Get started with new Projects
         </span>
-        <div className="grid grid-rows-3 gap-3">
+        <div className="flex flex-col gap-3">
           {cards.map(({ id, icon, label, desc, accent, border, iconColor, type }) => (
             <button
               key={id}
-              className={`flex flex-row items-center gap-3.5 px-4 py-3.5 rounded-xl bg-zinc-900 border border-zinc-800 ${border} text-left cursor-pointer transition-all hover:-translate-y-0.5 group`}
+              className={`flex flex-row items-center gap-3.5 px-4 py-6 rounded-xl bg-zinc-900 border border-zinc-800 ${border} text-left cursor-pointer transition-all hover:-translate-y-0.5 group w-full`}
               onClick={() => { setPopup(true); setType(type); localStorage.setItem("lang", id); }}
             >
               <div className={`p-2 rounded-lg bg-zinc-800 w-fit text-xl flex-shrink-0 ${iconColor}`}>
@@ -95,10 +96,10 @@ function AvailableProj() {
         </div>
       </div>
 
-      {/* Right / Recent Projects */}
-      <div className="flex flex-col gap-3 pr-5 pb-5">
+      {/* Right / Recent Projects - Using flex-2 and fix scroll */}
+      <div className="flex-[3] flex flex-col gap-3 pr-5 pb-5 h-full">
         <span className="font-semibold text-slate-300">Recent Projects</span>
-        <div className="flex flex-col gap-0.5 overflow-y-auto min-h-0 flex-1">
+        <div className="flex flex-col gap-0.5 overflow-y-auto pr-2 custom-scrollbar">
           {projectDetails.map((project, i) => {
             const dotColor = {
               python: "bg-blue-400",
@@ -114,32 +115,30 @@ function AvailableProj() {
 
             return (
               <div
-  key={i}
-  className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg border-b border-zinc-800 hover:bg-zinc-900 hover:border-zinc-800 cursor-pointer transition-all group"
-  onClick={() => {
-    localStorage.setItem("projectId", project.id);
-    localStorage.setItem("projectName", project.name);
-    localStorage.setItem("lang", project.type);
-    navigate("/editor");
-  }}
->
-  <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${dotColor}`} />
-  <span className="text-[12.5px] font-medium text-zinc-400 group-hover:text-slate-200 flex-1 truncate transition-colors">
-    {project.name}
-  </span>
+                key={i}
+                className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg border-b border-zinc-800 hover:bg-zinc-900 hover:border-zinc-800 cursor-pointer transition-all group"
+                onClick={() => {
+                  localStorage.setItem("projectId", project.id);
+                  localStorage.setItem("projectName", project.name);
+                  localStorage.setItem("lang", project.type);
+                  navigate("/editor");
+                }}
+              >
+                <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${dotColor}`} />
+                <span className="text-[12.5px] font-medium text-zinc-400 group-hover:text-slate-200 flex-1 truncate transition-colors">
+                  {project.name}
+                </span>
 
-  {/* Type label — centered with flex */}
-  <span className="text-[10px] font-mono text-zinc-500 pr-100 flex-shrink-0 w-10 text-center">
-    {typeLabel}
-  </span>
+                <span className="text-[10px] font-mono text-zinc-500 pr-85 flex-shrink-0 w-10 text-center mr-4">
+                  {typeLabel}
+                </span>
 
-  {/* Delete — always visible */}
-  <FiTrash2
-    className="text-zinc-600 hover:text-red-400 transition-colors flex-shrink-0"
-    size={13}
-    onClick={(e) => handleDelete(e, project.id)}
-  />
-</div>
+                <FiTrash2
+                  className="text-zinc-600 hover:text-red-400 transition-colors flex-shrink-0"
+                  size={13}
+                  onClick={(e) => handleDelete(e, project.id)}
+                />
+              </div>
             );
           })}
         </div>

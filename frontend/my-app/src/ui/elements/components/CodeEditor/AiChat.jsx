@@ -66,13 +66,12 @@ function AIChat({ loadFiles, filess }) {
   });
 }
   // Handle Streaming Response
-  const getStreamedResponse = async (message) => {
+const getStreamedResponse = async (message) => {
     const token = Cookies.get("token");
     const projectId = localStorage.getItem("projectId");
-    const lang= localStorage.getItem("lang");
+    const lang = localStorage.getItem("lang");
 
     const ignoredFiles = filterFiles(filess);
-
     console.log(ignoredFiles);
 
     const res = await fetch("http://localhost:3000/llm/response", {
@@ -81,7 +80,7 @@ function AIChat({ loadFiles, filess }) {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ token, files: ignoredFiles, projectId, prompt: message, lang:lang }),
+      body: JSON.stringify({ token, files: ignoredFiles, projectId, prompt: message, lang }),
     });
 
     if (!res.body) return "";
@@ -89,19 +88,27 @@ function AIChat({ loadFiles, filess }) {
     const decoder = new TextDecoder();
     let fullText = "";
 
-    // Push an initial empty AI message to the history
     setChatHistory((prev) => [...prev, "AI: "]);
 
     const reader = res.body.getReader();
-    
+
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
 
       const decodedChunk = decoder.decode(value, { stream: true });
-      fullText += decodedChunk;
 
-      // Update the last message (the AI's message) in real-time
+      // Parse SSE lines — extract text after "data: "
+      const lines = decodedChunk.split("\n");
+      for (const line of lines) {
+        if (line.startsWith("data: ")) {
+          const msg = line.replace("data: ", "").trim();
+          if (msg) {
+            fullText += msg + "\n\n"; // newline between each agent step
+          }
+        }
+      }
+
       setChatHistory((prev) => {
         const updated = [...prev];
         updated[updated.length - 1] = "AI: " + fullText;
@@ -111,7 +118,6 @@ function AIChat({ loadFiles, filess }) {
 
     return fullText;
   };
-
   
 
   const handleSend = async () => {
@@ -163,7 +169,7 @@ function AIChat({ loadFiles, filess }) {
           chatHistory.map((msg, index) => (
             <div
               key={index}
-              className={`px-3 py-2 rounded-md text-xs leading-relaxed max-w-[90%] ${
+              className={`px-3 py-2 rounded-md text-xs leading-relaxed max-w-[90%] whitespace-pre-wrap ${
                 msg.startsWith("AI")
                   ? "bg-zinc-800 text-zinc-100 self-start"
                   : "bg-blue-900/40 text-blue-100 self-end"
