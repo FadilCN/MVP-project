@@ -17,13 +17,11 @@ export const verifyToken = async (req, res, next) => {
   }
 
   // const token = req.cookies.token;
-  console.log("Token from header:", token);
-  console.log("JWT Secret Key:", JWTkey);
 
   try {
     const decoded = jwt.verify(token, JWTkey);
     req.payload = decoded;
-    console.log(decoded);
+
     next();
   } catch (err) {
     return res.status(401).json({ message: "Restricted", error: err.message });

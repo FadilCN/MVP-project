@@ -78,7 +78,7 @@ function AvailableProj() {
             <button
               key={id}
               className={`flex flex-row items-center gap-3.5 px-4 py-3.5 rounded-xl bg-zinc-900 border border-zinc-800 ${border} text-left cursor-pointer transition-all hover:-translate-y-0.5 group`}
-              onClick={() => { setPopup(true); setType(type); }}
+              onClick={() => { setPopup(true); setType(type); localStorage.setItem("lang", id); }}
             >
               <div className={`p-2 rounded-lg bg-zinc-800 w-fit text-xl flex-shrink-0 ${iconColor}`}>
                 {icon}
@@ -115,10 +115,11 @@ function AvailableProj() {
             return (
               <div
   key={i}
-  className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg border border-transparent hover:bg-zinc-900 hover:border-zinc-800 cursor-pointer transition-all group"
+  className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg border-b border-zinc-800 hover:bg-zinc-900 hover:border-zinc-800 cursor-pointer transition-all group"
   onClick={() => {
     localStorage.setItem("projectId", project.id);
     localStorage.setItem("projectName", project.name);
+    localStorage.setItem("lang", project.type);
     navigate("/editor");
   }}
 >

@@ -13,5 +13,6 @@ router.get(
 router.get("/:id", verifyToken, fileControllers.getFileById);
 router.put("/:id", verifyToken, fileControllers.updateFile);
 router.delete("/:id", verifyToken, fileControllers.deleteFile);
+router.put("/:projectId/:fileName", verifyToken, fileControllers.updateFileByName);
 
 export default router;

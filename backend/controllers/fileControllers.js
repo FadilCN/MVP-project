@@ -61,3 +61,26 @@ export const deleteFile = async (req, res) => {
   }
   res.json({ message: "File deleted successfully" });
 };
+
+// update file content by file name
+// update file content by file name AND project ID
+export const updateFileByName = async (req, res) => {
+  const { projectId, fileName } = req.params; // Get both from the URL
+  const { content } = req.body;
+
+  try {
+    const file = await File.findOneAndUpdate(
+      { fileName, projectId }, // Query: both must match
+      { content }, 
+      { new: true } 
+    );
+
+    if (!file) {
+      return res.status(404).json({ message: "File not found in this project" });
+    }
+
+    res.json(file);
+  } catch (error) {
+    res.status(500).json({ message: "Error updating content", error: error.message });
+  }
+};

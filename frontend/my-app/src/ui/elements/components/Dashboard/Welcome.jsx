@@ -3,7 +3,7 @@ function Welcome() {
     <div className="pl-5 grid grid-cols-[1fr_2fr] gap-4 bg-zinc-900 h-full overflow-hidden">
       
       <div className="text-[50px] pt-10 leading-[0.9]">
-        Hello<br /> User Name
+        Hello<br /> Coder 👾
       </div>
 
       <div className="text-[50px] pt-10 leading-[0.9]">

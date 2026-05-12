@@ -48,6 +48,36 @@ function CodeViewer(props) {
     }
   };
 
+  function generatePreview(files) {
+  const html =
+    files.find((f) => f.fileName.endsWith(".html"))?.content || "";
+
+  const css = files
+    .filter((f) => f.fileName.endsWith(".css"))
+    .map((f) => f.content)
+    .join("");
+
+  const js = files
+    .filter((f) => f.fileName.endsWith(".js"))
+    .map((f) => f.content)
+    .join("");
+
+  return `
+    <html>
+      <head>
+        <style>${css}</style>
+      </head>
+
+      <body>
+        ${html}
+
+        <script>
+          ${js}<\/script>
+      </body>
+    </html>
+  `;
+}
+
   useEffect(() => {
     const interval = setInterval(() => {
       const fileId = localStorage.getItem("fileId");
@@ -118,14 +148,37 @@ function CodeViewer(props) {
       </div>
 
       {/* OUTPUT SECTION */}
-      <div className="flex flex-col bg-black border-t border-zinc-800">
-        <div className="px-4 py-1 text-[10px] text-zinc-500 uppercase font-bold tracking-wider border-b border-zinc-900">
-          Terminal / Output
-        </div>
-        <div className="p-4 overflow-auto font-mono text-sm text-green-400 whitespace-pre-wrap">
-          {output ? output : <span className="text-zinc-600 italic">No output yet. Click "Run" to execute.</span>}
-        </div>
+      {
+  localStorage.getItem("lang") === "html" || localStorage.getItem("lang") === "HTML" ? (
+    
+    <iframe
+      srcDoc={generatePreview(props.files)}
+      title="preview"
+      style={{
+        width: "100%",
+        height: "100vh",
+        border: "none",
+        backgroundColor: "white",
+      }}
+    />
+  ) : (
+    <div className="flex flex-col bg-black border-t border-zinc-800">
+      <div className="px-4 py-1 text-[10px] text-zinc-500 uppercase font-bold tracking-wider border-b border-zinc-900">
+        Terminal / Output
       </div>
+
+      <div className="p-4 overflow-auto font-mono text-sm text-green-400 whitespace-pre-wrap">
+        {output ? (
+          output
+        ) : (
+          <span className="text-zinc-600 italic">
+            No output yet. Click "Run" to execute.
+          </span>
+        )}
+      </div>
+    </div>
+  )
+}
 
     </div>
   );

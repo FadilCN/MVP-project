@@ -77,7 +77,11 @@ function CodeEditor() {
         files={files}
       />
 
-      <AIChat code={code} loadFiles={loadFiles} />
+      <AIChat 
+      code={code}
+       loadFiles={loadFiles}
+       filess={files}
+        />
     </div>
   );
 }
